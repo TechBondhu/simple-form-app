@@ -19,7 +19,7 @@ function submitForm(data) {
   }
 
   // Save to Firebase Firestore
-  firebase.firestore().collection("applications").add({
+  firebase.firestore.collection("applications").add({
     name: name,
     phone: phone,
     address: address,
