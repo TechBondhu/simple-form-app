@@ -3,183 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Submission System</title>
+    <title>Simple Form App</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 </head>
-<body>
-    <div id="root"></div>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div id="auth-container" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 id="auth-title" class="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+        <div id="auth-error" class="text-red-500 mb-4 hidden"></div>
+        <div id="auth-success" class="text-green-500 mb-4 hidden"></div>
+        <input id="email" type="email" placeholder="Email" class="w-full p-2 mb-4 border rounded">
+        <input id="password" type="password" placeholder="Password" class="w-full p-2 mb-4 border rounded">
+        <button id="auth-button" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Sign Up</button>
+        <p id="auth-toggle" class="mt-4 text-center text-blue-500 cursor-pointer">Already have an account? Log In</p>
+    </div>
 
-    <script type="module">
-        import React, { useState, useEffect } from 'https://cdn.jsdelivr.net/npm/react@18.2.0/+esm';
-        import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/+esm';
+    <div id="form-container" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md hidden">
+        <h2 class="text-2xl font-bold mb-4 text-center">Submit Application</h2>
+        <div id="form-error" class="text-red-500 mb-4 hidden"></div>
+        <div id="form-success" class="text-green-500 mb-4 hidden"></div>
+        <input id="full-name" type="text" placeholder="Full Name" class="w-full p-2 mb-4 border rounded">
+        <textarea id="details" placeholder="Application Details" class="w-full p-2 mb-4 border rounded"></textarea>
+        <button id="submit-button" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Submit Application</button>
+        <button id="logout-button" class="w-full bg-red-500 text-white p-2 mt-4 rounded hover:bg-red-600">Log Out</button>
+    </div>
 
-        // Firebase Configuration
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase Configuration (Replace with your own config)
         const firebaseConfig = {
             apiKey: "AIzaSyCoIdMx9Zd7kQt9MSZmowbphaQVRl8D16E",
             authDomain: "admissionformdb.firebaseapp.com",
             projectId: "admissionformdb",
             storageBucket: "admissionformdb.firebasestorage.app",
             messagingSenderId: "398052082157",
-            appId: "1:398052082157:web:0bc02d66cbdf55dd2567e4
-        };
-        firebase.initializeApp(firebaseConfig);
+            appId: "1:398052082157:web:0bc02d66cbdf55dd2567e4        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // React Components
-        const App = () => {
-            const [user, setUser] = useState(null);
-            const [email, setEmail] = useState('');
-            const [password, setPassword] = useState('');
-            const [name, setName] = useState('');
-            const [details, setDetails] = useState('');
-            const [isSignup, setIsSignup] = useState(true);
-            const [error, setError] = useState('');
+        // DOM Elements
+        const authContainer = document.getElementById('auth-container');
+        const formContainer = document.getElementById('form-container');
+        const authTitle = document.getElementById('auth-title');
+        const authButton = document.getElementById('auth-button');
+        const authToggle = document.getElementById('auth-toggle');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const authError = document.getElementById('auth-error');
+        const authSuccess = document.getElementById('auth-success');
+        const fullNameInput = document.getElementById('full-name');
+        const detailsInput = document.getElementById('details');
+        const submitButton = document.getElementById('submit-button');
+        const logoutButton = document.getElementById('logout-button');
+        const formError = document.getElementById('form-error');
+        const formSuccess = document.getElementById('form-success');
 
-            useEffect(() => {
-                const unsubscribe = auth.onAuthStateChanged((user) => {
-                    setUser(user);
-                });
-                return () => unsubscribe();
-            }, []);
+        let isSignUp = true;
 
-            const handleAuth = async () => {
-                try {
-                    setError('');
-                    if (isSignup) {
-                        await auth.createUserWithEmailAndPassword(email, password);
-                        alert('Sign Up Successful! Please Log In.');
-                        setIsSignup(false);
-                    } else {
-                        await auth.signInWithEmailAndPassword(email, password);
-                    }
-                } catch (err) {
-                    setError(err.message);
-                }
-            };
+        // Toggle between Sign Up and Log In
+        authToggle.addEventListener('click', () => {
+            isSignUp = !isSignUp;
+            authTitle.textContent = isSignUp ? 'Sign Up' : 'Log In';
+            authButton.textContent = isSignUp ? 'Sign Up' : 'Log In';
+            authToggle.textContent = isSignUp ? 'Already have an account? Log In' : "Don't have an account? Sign Up";
+            authError.classList.add('hidden');
+            authSuccess.classList.add('hidden');
+        });
 
-            const handleLogout = async () => {
-                await auth.signOut();
-                setEmail('');
-                setPassword('');
-                setIsSignup(true);
-            };
+        // Handle Authentication
+        authButton.addEventListener('click', () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            authError.classList.add('hidden');
+            authSuccess.classList.add('hidden');
 
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                try {
-                    await db.collection('applications').add({
-                        name,
-                        details,
-                        userId: user.uid,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            if (isSignUp) {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(() => {
+                        authSuccess.textContent = 'Sign Up Successful! Please Log In.';
+                        authSuccess.classList.remove('hidden');
+                        isSignUp = false;
+                        authTitle.textContent = 'Log In';
+                        authButton.textContent = 'Log In';
+                        authToggle.textContent = "Don't have an account? Sign Up";
+                    })
+                    .catch(error => {
+                        authError.textContent = error.message;
+                        authError.classList.remove('hidden');
                     });
-                    alert('Application Submitted Successfully!');
-                    setName('');
-                    setDetails('');
-                } catch (err) {
-                    setError('Failed to submit application: ' + err.message);
-                }
-            };
+            } else {
+                auth.signInWithEmailAndPassword(email, password)
+                    .then(() => {
+                        authContainer.classList.add('hidden');
+                        formContainer.classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        authError.textContent = error.message;
+                        authError.classList.remove('hidden');
+                    });
+            }
+        });
 
+        // Check if user is logged in
+        auth.onAuthStateChanged(user => {
             if (user) {
-                return (
-                    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                            <h2 className="text-2xl font-bold mb-6 text-center">Submit Application</h2>
-                            <button
-                                onClick={handleLogout}
-                                className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 mb-4"
-                            >
-                                Log Out
-                            </button>
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 mb-2" htmlFor="name">Full Name</label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        className="w-full p-2 border rounded-md"
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 mb-2" htmlFor="details">Application Details</label>
-                                    <textarea
-                                        id="details"
-                                        value={details}
-                                        onChange={(e) => setDetails(e.target.value)}
-                                        className="w-full p-2 border rounded-md"
-                                        rows="5"
-                                        required
-                                    ></textarea>
-                                </div>
-                                {error && <p className="text-red-500 mb-4">{error}</p>}
-                                <button
-                                    type="submit"
-                                    className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
-                                >
-                                    Submit Application
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                );
+                authContainer.classList.add('hidden');
+                formContainer.classList.remove('hidden');
+            } else {
+                authContainer.classList.remove('hidden');
+                formContainer.classList.add('hidden');
+            }
+        });
+
+        // Submit Application
+        submitButton.addEventListener('click', () => {
+            const fullName = fullNameInput.value;
+            const details = detailsInput.value;
+            formError.classList.add('hidden');
+            formSuccess.classList.add('hidden');
+
+            if (!fullName || !details) {
+                formError.textContent = 'Please fill out all fields.';
+                formError.classList.remove('hidden');
+                return;
             }
 
-            return (
-                <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-2xl font-bold mb-6 text-center">{isSignup ? 'Sign Up' : 'Log In'}</h2>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 mb-2" htmlFor="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-2 border rounded-md"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 mb-2" htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full p-2 border rounded-md"
-                                required
-                            />
-                        </div>
-                        {error && <p className="text-red-500 mb-4">{error}</p>}
-                        <button
-                            onClick={handleAuth}
-                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                        >
-                            {isSignup ? 'Sign Up' : 'Log In'}
-                        </button>
-                        <p className="mt-4 text-center">
-                            {isSignup ? 'Already have an account?' : 'Need an account?'}
-                            <button
-                                onClick={() => setIsSignup(!isSignup)}
-                                className="text-blue-600 hover:underline ml-1"
-                            >
-                                {isSignup ? 'Log In' : 'Sign Up'}
-                            </button>
-                        </p>
-                    </div>
-                </div>
-            );
-        };
+            const user = auth.currentUser;
+            if (user) {
+                db.collection('applications').add({
+                    fullName: fullName,
+                    details: details,
+                    userId: user.uid,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                .then(() => {
+                    formSuccess.textContent = 'Application Submitted Successfully!';
+                    formSuccess.classList.remove('hidden');
+                    fullNameInput.value = '';
+                    detailsInput.value = '';
+                })
+                .catch(error => {
+                    formError.textContent = error.message;
+                    formError.classList.remove('hidden');
+                });
+            }
+        });
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        // Log Out
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().then(() => {
+                formContainer.classList.add('hidden');
+                authContainer.classList.remove('hidden');
+            });
+        });
     </script>
 </body>
 </html>
