@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>আমার প্রথম ওয়েবসাইট</title>
-  
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
@@ -19,7 +19,7 @@
       messagingSenderId: "398052082157",
       appId: "1:398052082157:web:0bc02d66cbdf55dd2567e4"
     };
-    
+
     // Initialize Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -33,7 +33,7 @@
   <h2>লগইন করুন</h2>
   <form>
     <label for="username">ইউজারনেম:</label>
-    <input type="text" id="username" name="username" required><br><br>
+    <input type="email" id="username" name="username" required><br><br>
 
     <label for="password">পাসওয়ার্ড:</label>
     <input type="password" id="password" name="password" required><br><br>
@@ -41,9 +41,13 @@
     <button type="submit">লগইন</button>
   </form>
 
+  <!-- Logout Button -->
+  <button id="logoutBtn" style="display: none;">লগআউট</button>
+
   <!-- Firebase Authentication Logic -->
   <script>
     const loginForm = document.querySelector('form');
+    const logoutBtn = document.querySelector('#logoutBtn');
 
     // লগইন ফাংশন
     loginForm.addEventListener('submit', (e) => {
@@ -57,12 +61,25 @@
         .then((userCredential) => {
           // ইউজার লগইন হয়ে গেছে
           alert("লগইন সফল!");
+          // লগইন সফল হলে লগআউট বাটন প্রদর্শন করা
+          logoutBtn.style.display = 'block';
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           alert(errorMessage);
         });
+    });
+
+    // লগআউট ফাংশন
+    logoutBtn.addEventListener('click', () => {
+      auth.signOut().then(() => {
+        alert("লগআউট সফল!");
+        // লগআউট হওয়ার পর লগইন পেজে পাঠানো
+        window.location.href = "index.html"; // বা যেকোনো পেজ যেখানে পাঠাতে চাও
+      }).catch((error) => {
+        alert("লগআউটে সমস্যা হয়েছে: " + error.message);
+      });
     });
   </script>
 </body>
