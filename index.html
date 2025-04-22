@@ -3,18 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>কেমন আছো সিয়াম দাদু,  এই ওয়েবসাইটটা হিসাব বানিয়েছে !</title>
- 
-<h1>স্বাগতম!</h1>
-<p>এটা আমার প্রথম ওয়েবসাইট।</p>
+  <title>আমার প্রথম ওয়েবসাইট</title>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+  
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCoIdMx9Zd7kQt9MSZmowbphaQVRl8D16E",
+      authDomain: "admissionformdb.firebaseapp.com",
+      projectId: "admissionformdb",
+      storageBucket: "admissionformdb.firebasestorage.app",
+      messagingSenderId: "398052082157",
+      appId: "1:398052082157:web:0bc02d66cbdf55dd2567e4"
+    };
+    
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  </script>
+</head>
 
-<h2>লগইন করুন</h2>
-<form>
-  <label for="username">ইউজারনেম:</label>
-  <input type="text" id="username" name="username"><br><br>
+<body>
+  <h1>স্বাগতম!</h1>
+  <p>এটা আমার প্রথম ওয়েবসাইট।</p>
 
-  <label for="password">পাসওয়ার্ড:</label>
-  <input type="password" id="password" name="password"><br><br>
+  <h2>লগইন করুন</h2>
+  <form>
+    <label for="username">ইউজারনেম:</label>
+    <input type="text" id="username" name="username" required><br><br>
 
-  <button type="submit">লগইন</button>
-</form>
+    <label for="password">পাসওয়ার্ড:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <button type="submit">লগইন</button>
+  </form>
+
+  <!-- Firebase Authentication Logic -->
+  <script>
+    const loginForm = document.querySelector('form');
+
+    // লগইন ফাংশন
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const username = document.querySelector('#username').value;
+      const password = document.querySelector('#password').value;
+
+      // সাইনআপ এবং লগইন সিস্টেম
+      auth.signInWithEmailAndPassword(username, password)
+        .then((userCredential) => {
+          // ইউজার লগইন হয়ে গেছে
+          alert("লগইন সফল!");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          alert(errorMessage);
+        });
+    });
+  </script>
+</body>
+</html>
