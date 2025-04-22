@@ -6,16 +6,16 @@
   <title>Application Form</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 flex items-center justify-center h-screen">
   <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold text-gray-800">Application Form</h2>
-      <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 hidden">Logout</button>
+      <button id="logoutBtn" onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 hidden">Logout</button>
     </div>
     <div>
       <div class="mb-4">
-        <label for="name" class="block text-gray-700 font-medium mb-2">Full Name</label>
-        <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your full name" required>
+        <label for="name" class="block text-gray-700 font-medium mb-2">Name</label>
+        <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your name" required>
       </div>
       <div class="mb-4">
         <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number</label>
@@ -31,6 +31,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
     
     <!-- Firebase Config and Auth Scripts -->
     <script src="firebase-config.js"></script>
@@ -41,34 +42,26 @@
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
 
-      // Check if user is logged in
+      // Check if user is logged in and email verified
       firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          // User is logged in, show logout button
-          document.getElementById("logoutBtn").classList.remove("hidden");
-        } else {
-          // User is not logged in, redirect to index page
+        if (!user || !user.emailVerified) {
+          // If user is not logged in or email not verified, redirect to index page
           window.location.href = "index.html";
+        } else {
+          // Show logout button if user is logged in
+          document.getElementById("logoutBtn").classList.remove("hidden");
         }
       });
 
-      // Logout button event listener
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        logout();
-      });
-
-      // Form submission handler (to be implemented in form-handler.js)
+      // Handle Form Submission
       function handleFormSubmit() {
-        const name = document.getElementById("name").value;
-        const phone = document.getElementById("phone").value;
-        const address = document.getElementById("address").value;
+        const data = {
+          name: document.getElementById("name").value,
+          phone: document.getElementById("phone").value,
+          address: document.getElementById("address").value
+        };
 
-        if (!name || !phone || !address) {
-          alert("Please fill in all fields.");
-          return;
-        }
-
-        submitForm({ name, phone, address });
+        submitForm(data);
       }
     </script>
   </div>
