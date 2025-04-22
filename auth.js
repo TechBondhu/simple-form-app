@@ -1,5 +1,5 @@
 function signup(email, password) {
-  firebase.auth().createUserWithEmailAndPassword(email, password)
+  firebase.auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       // Sign-up successful, send email verification
       sendVerificationEmail(userCredential.user);
@@ -33,7 +33,7 @@ function sendVerificationEmail(user) {
 }
 
 function login(email, password) {
-  firebase.auth().signInWithEmailAndPassword(email, password)
+  firebase.auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       const user = userCredential.user;
       if (user.emailVerified) {
@@ -42,7 +42,7 @@ function login(email, password) {
         window.location.href = "form.html";
       } else {
         alert("Please verify your email before logging in.");
-        firebase.auth().signOut(); // Log out if email is not verified
+        firebase.auth.signOut(); // Log out if email is not verified
       }
     })
     .catch((error) => {
@@ -52,7 +52,7 @@ function login(email, password) {
 }
 
 function logout() {
-  firebase.auth().signOut()
+  firebase.auth.signOut()
     .then(() => {
       console.log("Logout successful");
       // Redirect to index page
@@ -65,7 +65,7 @@ function logout() {
 }
 
 function resetPassword(email) {
-  firebase.auth().sendPasswordResetEmail(email)
+  firebase.auth.sendPasswordResetEmail(email)
     .then(() => {
       alert("A password reset email has been sent to your email address.");
     })
