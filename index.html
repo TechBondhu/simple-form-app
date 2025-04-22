@@ -12,7 +12,7 @@
     <p class="text-gray-600 mb-6">Please login or register to continue.</p>
     <div class="space-x-4">
       <a href="signup.html" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Register</a>
-      <button id="loginBtn" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Login</button>
+      <a href="login.html" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Login</a>
     </div>
   </div>
 
@@ -33,15 +33,6 @@
       if (user) {
         // If user is logged in, redirect to form page
         window.location.href = "form.html";
-      }
-    });
-
-    // Login button event listener (for future login modal or page)
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      const email = prompt("Enter your email:");
-      const password = prompt("Enter your password:");
-      if (email && password) {
-        login(email, password);
       }
     });
   </script>
