@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>আবেদন ফর্ম</title>
+</head>
+<body>
+  <h2>আবেদন ফর্ম</h2>
+
+  <form id="application-form">
+    <input type="text" placeholder="আপনার নাম" required><br>
+    <input type="text" placeholder="ঠিকানা" required><br>
+    <button type="submit">জমা দিন</button>
+  </form>
+
+  <button onclick="logout()">Logout</button>
+
+  <script type="module">
+    import { auth, onAuthStateChanged, signOut } from './firebase-config.js';
+
+    // Check if user is logged in
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = 'index.html'; // যদি না থাকে, ব্যাক টু login
+      }
+    });
+
+    const logout = () => {
+      signOut(auth).then(() => {
+        window.location.href = 'index.html';
+      });
+    }
+
+    window.logout = logout;
+  </script>
+</body>
+</html>
