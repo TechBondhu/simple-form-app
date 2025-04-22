@@ -1,41 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>স্বাগতম!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>স্বাগতম!</h1>
-  <p>এটা আমার প্রথম ওয়েবসাইট।</p>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Our Website</h1>
+    <p class="text-gray-600 mb-6">Please login or register to continue.</p>
+    <div class="space-x-4">
+      <a href="signup.html" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Register</a>
+      <button id="loginBtn" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Login</button>
+    </div>
+  </div>
 
-  <hr>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+  
+  <!-- Firebase Config and Auth Scripts -->
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
 
-  <h2>Login</h2>
-  <input type="email" id="login-email" placeholder="Email">
-  <input type="password" id="login-password" placeholder="Password">
-  <button onclick="login()">Log In</button>
+  <script>
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
 
-  <p>নতুন ইউজার? <a href="signup.html">Sign Up করুন</a></p>
+    // Check if user is already logged in
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // If user is logged in, redirect to form page
+        window.location.href = "form.html";
+      }
+    });
 
-  <p id="login-status"></p>
-
-  <script type="module">
-    import { auth, signInWithEmailAndPassword } from './firebase-config.js';
-
-    const login = () => {
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          window.location.href = 'form.html'; // রিডাইরেক্ট ফর্মে
-        })
-        .catch((error) => {
-          document.getElementById('login-status').innerText = error.message;
-        });
-    }
-
-    window.login = login;
+    // Login button event listener (for future login modal or page)
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const email = prompt("Enter your email:");
+      const password = prompt("Enter your password:");
+      if (email && password) {
+        login(email, password);
+      }
+    });
   </script>
 </body>
 </html>
