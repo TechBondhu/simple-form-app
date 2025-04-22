@@ -27,13 +27,12 @@
         <button id="logout-button" class="w-full bg-red-500 text-white p-2 mt-4 rounded hover:bg-red-600">Log Out</button>
     </div>
 
-    <!-- Firebase SDK (Modular) -->
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+    <!-- Firebase SDK (Global CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+    <script>
         // Firebase Configuration (Replace with your own config)
         const firebaseConfig = {
             apiKey: "AIzaSyCoIdMx9Zd7kQt9MSZmowbphaQVRl8D16E",
@@ -45,9 +44,9 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // DOM Elements
         const authContainer = document.getElementById('auth-container');
@@ -86,7 +85,7 @@
             authSuccess.classList.add('hidden');
 
             if (isSignUp) {
-                createUserWithEmailAndPassword(auth, email, password)
+                auth.createUserWithEmailAndPassword(email, password)
                     .then(() => {
                         authSuccess.textContent = 'Sign Up Successful! Please Log In.';
                         authSuccess.classList.remove('hidden');
@@ -100,7 +99,7 @@
                         authError.classList.remove('hidden');
                     });
             } else {
-                signInWithEmailAndPassword(auth, email, password)
+                auth.signInWithEmailAndPassword(email, password)
                     .then(() => {
                         authContainer.classList.add('hidden');
                         formContainer.classList.remove('hidden');
@@ -113,7 +112,7 @@
         });
 
         // Check if user is logged in
-        onAuthStateChanged(auth, user => {
+        auth.onAuthStateChanged(user => {
             if (user) {
                 authContainer.classList.add('hidden');
                 formContainer.classList.remove('hidden');
@@ -138,11 +137,11 @@
 
             const user = auth.currentUser;
             if (user) {
-                addDoc(collection(db, 'applications'), {
+                db.collection('applications').add({
                     fullName: fullName,
                     details: details,
                     userId: user.uid,
-                    timestamp: serverTimestamp()
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 })
                 .then(() => {
                     formSuccess.textContent = 'Application Submitted Successfully!';
@@ -159,7 +158,7 @@
 
         // Log Out
         logoutButton.addEventListener('click', () => {
-            signOut(auth).then(() => {
+            auth.signOut().then(() => {
                 formContainer.classList.add('hidden');
                 authContainer.classList.remove('hidden');
             });
