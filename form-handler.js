@@ -18,17 +18,7 @@ function submitForm(data) {
     return;
   }
 
-  // If validation passes, show success message
-  alert("Form submitted successfully!\n\nName: " + name + "\nPhone: " + phone + "\nAddress: " + address);
-
-  // Optionally, clear the form (you can uncomment this if needed)
-  // document.getElementById("name").value = "";
-  // document.getElementById("phone").value = "";
-  // document.getElementById("address").value = "";
-
-  // Future implementation: Save to Firebase Firestore
-  // Example (commented out):
-  /*
+  // Save to Firebase Firestore
   firebase.firestore().collection("applications").add({
     name: name,
     phone: phone,
@@ -36,11 +26,17 @@ function submitForm(data) {
     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
   })
   .then(() => {
-    alert("Form submitted and saved successfully!");
+    // Show success message with form data
+    const successMessage = `Form submitted and saved successfully!\n\nName: ${name}\nPhone: ${phone}\nAddress: ${address}`;
+    alert(successMessage);
+
+    // Clear the form after successful submission
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("address").value = "";
   })
   .catch((error) => {
     console.error("Error saving form data:", error);
     alert("Error submitting form: " + error.message);
   });
-  */
 }
