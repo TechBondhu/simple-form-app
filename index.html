@@ -27,12 +27,13 @@
         <button id="logout-button" class="w-full bg-red-500 text-white p-2 mt-4 rounded hover:bg-red-600">Log Out</button>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDK (Modular) -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-    <script>
         // Firebase Configuration (Replace with your own config)
         const firebaseConfig = {
             apiKey: "AIzaSyCoIdMx9Zd7kQt9MSZmowbphaQVRl8D16E",
@@ -40,12 +41,13 @@
             projectId: "admissionformdb",
             storageBucket: "admissionformdb.firebasestorage.app",
             messagingSenderId: "398052082157",
-            appId: "1:398052082157:web:0bc02d66cbdf55dd2567e4        };
+            appId: "1:398052082157:web:0bc02d66cbdf55dd2567e4       
+        };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
         // DOM Elements
         const authContainer = document.getElementById('auth-container');
@@ -84,7 +86,7 @@
             authSuccess.classList.add('hidden');
 
             if (isSignUp) {
-                auth.createUserWithEmailAndPassword(email, password)
+                createUserWithEmailAndPassword(auth, email, password)
                     .then(() => {
                         authSuccess.textContent = 'Sign Up Successful! Please Log In.';
                         authSuccess.classList.remove('hidden');
@@ -98,7 +100,7 @@
                         authError.classList.remove('hidden');
                     });
             } else {
-                auth.signInWithEmailAndPassword(email, password)
+                signInWithEmailAndPassword(auth, email, password)
                     .then(() => {
                         authContainer.classList.add('hidden');
                         formContainer.classList.remove('hidden');
@@ -111,7 +113,7 @@
         });
 
         // Check if user is logged in
-        auth.onAuthStateChanged(user => {
+        onAuthStateChanged(auth, user => {
             if (user) {
                 authContainer.classList.add('hidden');
                 formContainer.classList.remove('hidden');
@@ -136,11 +138,11 @@
 
             const user = auth.currentUser;
             if (user) {
-                db.collection('applications').add({
+                addDoc(collection(db, 'applications'), {
                     fullName: fullName,
                     details: details,
                     userId: user.uid,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: serverTimestamp()
                 })
                 .then(() => {
                     formSuccess.textContent = 'Application Submitted Successfully!';
@@ -157,7 +159,7 @@
 
         // Log Out
         logoutButton.addEventListener('click', () => {
-            auth.signOut().then(() => {
+            signOut(auth).then(() => {
                 formContainer.classList.add('hidden');
                 authContainer.classList.remove('hidden');
             });
