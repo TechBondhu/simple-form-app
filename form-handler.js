@@ -1,8 +1,12 @@
+// form-handler.js
+
+// ফর্ম ডেটা সাবমিট করার ফাংশন
 function submitForm(data) {
-  console.log("ফর্ম থেকে পাওয়া ডাটা:", data); // ডিবাগ লগ
+  console.log("ফর্ম থেকে পাওয়া ডাটা:", data); // ডিবাগ লগ, তোর স্টাইল অনুযায়ী
 
   const { name, phone, address } = data;
 
+  // ভ্যালিডেশন চেক (তোর দেওয়া কোডের মতো)
   if (!name || name.trim() === "") {
     alert("নাম খালি রাখা যাবে না। দয়া করে একটি নাম দিন।");
     return;
@@ -19,21 +23,24 @@ function submitForm(data) {
     return;
   }
 
+  // ডেটা ক্লিন করা
   const cleanData = {
     name: name.trim(),
     phone: phone.trim(),
     address: address.trim(),
-    submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+    submittedAt: firebase.firestore.FieldValue.serverTimestamp() // সার্ভারের সময়
   };
 
   console.log("Firestore-এ পাঠানোর জন্য ডাটা:", cleanData); // ডিবাগ লগ
 
+  // Firestore-এ ডেটা স্টোর করা
   firebase.firestore().collection("forms").add(cleanData)
     .then(() => {
       console.log("ডাটা সফলভাবে সেভ হয়েছে!"); // ডিবাগ লগ
       const successMessage = `ফর্ম সফলভাবে সাবমিট করা হয়েছে!\n\nনাম: ${name}\nফোন: ${phone}\nঠিকানা: ${address}`;
       alert(successMessage);
 
+      // ফর্ম রিসেট করা
       document.getElementById("name").value = "";
       document.getElementById("phone").value = "";
       document.getElementById("address").value = "";
