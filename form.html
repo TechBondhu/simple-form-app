@@ -6,7 +6,6 @@
   <title>Application Form</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIA4e5tAAAAAElFTkSuQmCC">
-  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
   <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -14,7 +13,7 @@
       <h2 class="text-2xl font-bold text-gray-800">Application Form</h2>
       <button id="logoutBtn" onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 hidden">Logout</button>
     </div>
-    <div>
+    <form id="applicationForm">
       <div class="mb-4">
         <label for="name" class="block text-gray-700 font-medium mb-2">Name</label>
         <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your name" required>
@@ -27,13 +26,13 @@
         <label for="address" class="block text-gray-700 font-medium mb-2">Address</label>
         <textarea id="address" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your address" required></textarea>
       </div>
-      <button onclick="handleFormSubmit()" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Submit</button>
-    </div>
+      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Submit</button>
+    </form>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
     <!-- আমাদের ফাইল -->
     <script src="firebase-config.js"></script>
@@ -53,8 +52,10 @@
         }
       });
 
-      // ফর্ম সাবমিট করা
-      function handleFormSubmit() {
+      // ফর্ম সাবমিট হ্যান্ডল করা
+      document.getElementById("applicationForm").addEventListener("submit", function(e) {
+        e.preventDefault(); // ডিফল্ট ফর্ম সাবমিশন বন্ধ করা
+
         const data = {
           name: document.getElementById("name").value,
           phone: document.getElementById("phone").value,
@@ -62,7 +63,7 @@
         };
 
         submitForm(data);
-      }
+      });
     </script>
   </div>
 </body>
