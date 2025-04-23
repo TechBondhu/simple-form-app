@@ -6,7 +6,7 @@ function signup(email, password) {
     .then((userCredential) => {
       console.log("সাইনআপ সফল!", userCredential.user);
 
-      // কোনো ভেরিফিকেশন বা অটো লগইন নেই, শুধু সাকসেস মেসেজ
+      // কোনো ভেরিফিকেশন চেক নেই, শুধু সাকসেস মেসেজ
       alert("সাইনআপ সফল! এখন লগইন করুন।");
     })
     .catch((error) => {
