@@ -3,38 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome Page</title>
+  <title>Home - Simple Form App</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIA4e5tAAAAAElFTkSuQmCC">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
-  <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-    <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Our Website</h1>
-    <p class="text-gray-600 mb-6">Please login or register to continue.</p>
-    <div class="space-x-4">
-      <a href="signup.html" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Register</a>
-      <a href="login.html" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Login</a>
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Welcome to Simple Form App</h2>
+    <div class="space-y-4">
+      <a href="login.html" class="block bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">Login</a>
+      <a href="signup.html" class="block bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Sign Up</a>
     </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- আমাদের ফাইল -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+
+    <script>
+      // Firebase শুরু করা
+      firebase.initializeApp(firebaseConfig);
+
+      // ইউজার লগইন আছে কি না চেক করা
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user && user.emailVerified) {
+          window.location.href = "form.html";
+        }
+      });
+    </script>
   </div>
-
-  <!-- Firebase SDK (UMD Build) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  
-  <!-- Firebase Config and Auth Scripts -->
-  <script src="firebase-config.js"></script>
-  <script src="auth.js"></script>
-
-  <script>
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Check if user is already logged in
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        // If user is logged in, redirect to form page
-        window.location.href = "form.html";
-      }
-    });
-  </script>
 </body>
 </html>
