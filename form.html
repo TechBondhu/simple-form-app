@@ -43,9 +43,9 @@
       // Firebase শুরু করা
       firebase.initializeApp(firebaseConfig);
 
-      // ইউজার লগইন আছে কি না চেক করা
+      // ইউজার লগইন আছে কি না চেক করা (ভেরিফিকেশন চেক বাদ দেওয়া)
       firebase.auth().onAuthStateChanged((user) => {
-        if (!user || !user.emailVerified) {
+        if (!user) {
           window.location.href = "index.html";
         } else {
           document.getElementById("logoutBtn").classList.remove("hidden");
@@ -54,7 +54,7 @@
 
       // ফর্ম সাবমিট হ্যান্ডল করা
       document.getElementById("applicationForm").addEventListener("submit", function(e) {
-        e.preventDefault(); // ডিফল্ট ফর্ম সাবমিশন বন্ধ করা
+        e.preventDefault();
 
         const data = {
           name: document.getElementById("name").value,
