@@ -1,42 +1,44 @@
 function submitForm(data) {
+  // ডাটা আলাদা করা
   const { name, phone, address } = data;
 
-  // Basic validation
+  // ডাটা ঠিক আছে কি না চেক করা
   if (!name || name.trim() === "") {
-    alert("Name cannot be empty.");
+    alert("নাম খালি রাখা যাবে না। দয়া করে একটি নাম দিন।");
     return;
   }
 
   const phoneRegex = /^\d{10,15}$/;
   if (!phone || !phoneRegex.test(phone)) {
-    alert("Please enter a valid phone number (10-15 digits).");
+    alert("দয়া করে একটি বৈধ ফোন নম্বর দিন (১০-১৫ সংখ্যা)।");
     return;
   }
 
   if (!address || address.trim() === "") {
-    alert("Address cannot be empty.");
+    alert("ঠিকানা খালি রাখা যাবে না। দয়া করে একটি ঠিকানা দিন।");
     return;
   }
 
-  // Save to Firebase Firestore
-  firebase.firestore().collection("applications").add({
-    name: name,
-    phone: phone,
-    address: address,
+  // ডাটা ঠিক করা
+  const cleanData = {
+    name: name.trim(),
+    phone: phone.trim(),
+    address: address.trim(),
     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(() => {
-    // Show success message with form data
-    const successMessage = `Form submitted and saved successfully!\n\nName: ${name}\nPhone: ${phone}\nAddress: ${address}`;
-    alert(successMessage);
+  };
 
-    // Clear the form after successful submission
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    document.getElementById("address").value = "";
-  })
-  .catch((error) => {
-    console.error("Error saving form data:", error);
-    alert("Error submitting form: " + error.message);
-  });
+  // Firestore-এ ডাটা পাঠানো
+  firebase.firestore().collection("forms").add(cleanData)
+    .then(() => {
+      const successMessage = `ফর্ম সফলভাবে সাবমিট করা হয়েছে!\n\nনাম: ${name}\nফোন: ${phone}\nঠিকানা: ${address}`;
+      alert(successMessage);
+
+      // ফর্ম ক্লিয়ার করা
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("address").value = "";
+    })
+    .catch((error) => {
+      alert("ডাটা সেভ করতে সমস্যা: " + error.message);
+    });
 }
