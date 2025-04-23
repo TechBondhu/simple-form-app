@@ -1,7 +1,3 @@
-// firebase-config.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyCoIdMx9Zd7kQt9MSZmowbphaQVRl8D16E",
   authDomain: "admissionformdb.firebaseapp.com",
