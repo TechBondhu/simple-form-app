@@ -1,8 +1,8 @@
 function submitForm(data) {
-  // ডাটা আলাদা করা
+  console.log("ফর্ম থেকে পাওয়া ডাটা:", data); // ডিবাগ লগ
+
   const { name, phone, address } = data;
 
-  // ডাটা ঠিক আছে কি না চেক করা
   if (!name || name.trim() === "") {
     alert("নাম খালি রাখা যাবে না। দয়া করে একটি নাম দিন।");
     return;
@@ -19,7 +19,6 @@ function submitForm(data) {
     return;
   }
 
-  // ডাটা ঠিক করা
   const cleanData = {
     name: name.trim(),
     phone: phone.trim(),
@@ -27,18 +26,20 @@ function submitForm(data) {
     submittedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  // Firestore-এ ডাটা পাঠানো
+  console.log("Firestore-এ পাঠানোর জন্য ডাটা:", cleanData); // ডিবাগ লগ
+
   firebase.firestore().collection("forms").add(cleanData)
     .then(() => {
+      console.log("ডাটা সফলভাবে সেভ হয়েছে!"); // ডিবাগ লগ
       const successMessage = `ফর্ম সফলভাবে সাবমিট করা হয়েছে!\n\nনাম: ${name}\nফোন: ${phone}\nঠিকানা: ${address}`;
       alert(successMessage);
 
-      // ফর্ম ক্লিয়ার করা
       document.getElementById("name").value = "";
       document.getElementById("phone").value = "";
       document.getElementById("address").value = "";
     })
     .catch((error) => {
+      console.error("ডাটা সেভ করতে সমস্যা:", error); // ডিবাগ লগ
       alert("ডাটা সেভ করতে সমস্যা: " + error.message);
     });
 }
