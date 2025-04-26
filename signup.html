@@ -43,16 +43,29 @@
 
         firebase.auth().createUserWithEmailAndPassword(email, password)
           .then((userCredential) => {
-            // ইউজার তৈরি হয়েছে, এখন ইমেইল ভেরিফিকেশন পাঠানো
             const user = userCredential.user;
-            user.sendEmailVerification()
-              .then(() => {
-                alert("সাইন আপ সফল! দয়া করে আপনার ইমেইল ভেরিফাই করুন।");
-                window.location.href = "login.html";
-              })
-              .catch((error) => {
-                alert("ইমেইল ভেরিফিকেশন পাঠাতে সমস্যা: " + error.message);
-              });
+            // ইউনিক sender_id জেনারেট
+            const senderId = crypto.randomUUID(); // UUID জেনারেট
+            // Firebase-এ ইউজার ডেটা স্টোর
+            firebase.firestore().collection('users').doc(senderId).set({
+              email: email,
+              sender_id: senderId,
+              created_at: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+              // ইমেইল ভেরিফিকেশন পাঠানো
+              user.sendEmailVerification()
+                .then(() => {
+                  alert("সাইন আপ সফল! দয়া করে আপনার ইমেইল ভেরিফাই করুন।");
+                  window.location.href = "login.html";
+                })
+                .catch((error) => {
+                  alert("ইমেইল ভেরিফিকেশন পাঠাতে সমস্যা: " + error.message);
+                });
+            })
+            .catch((error) => {
+              alert("ইউজার ডেটা স্টোর করতে সমস্যা: " + error.message);
+            });
           })
           .catch((error) => {
             alert("সাইন আপ করতে সমস্যা: " + error.message);
